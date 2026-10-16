@@ -19,9 +19,9 @@ describe("UserMenu", () => {
 
   it("collapsed, shows only the initials and takes a label instead", () => {
     render(<UserMenu name="Leo Mata" email="leo@calliope.ai" onSignOut={() => {}} collapsed />);
-    expect(screen.getByRole("button", { name: "Account menu for Leo Mata" })).not.toHaveTextContent(
-      "leo@calliope.ai"
-    );
+    expect(
+      screen.getByRole("button", { name: "LM, account menu for Leo Mata" })
+    ).not.toHaveTextContent("leo@calliope.ai");
   });
 
   it("lists pages as links, actions as items, and signs out", async () => {

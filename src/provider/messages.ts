@@ -71,7 +71,8 @@ export interface Messages {
     reasonRequired: string;
   };
   user: {
-    accountMenu: (name: string) => string;
+    /** The collapsed trigger's name: it shows only the initials, so the name starts with them (WCAG 2.5.3). */
+    accountMenu: (name: string, initials: string) => string;
     signOut: string;
   };
   appearance: {
@@ -166,7 +167,7 @@ export const defaultMessages: Messages = {
     reasonRequired: "A reason is required.",
   },
   user: {
-    accountMenu: (name) => `Account menu for ${name}`,
+    accountMenu: (name, initials) => `${initials}, account menu for ${name}`,
     signOut: "Sign out",
   },
   appearance: {

@@ -54,8 +54,10 @@ function ignoresShortcut(event: KeyboardEvent): boolean {
  * handed to the caller's collapse state) and, below `md`, the drawers the
  * rails open in.
  *
- * On narrow screens a rail renders inside a drawer as well as in its hidden
- * desktop place, so keep anything that must survive (an assistant's
+ * On narrow screens the top bar holds a button for each rail's drawer, so
+ * hide header controls that only make sense beside the content (a dock
+ * toggle). A rail then renders inside its drawer as well as in its hidden
+ * desktop place: keep anything that must survive (an assistant's
  * conversation) in state above the shell, not inside the rail.
  */
 export function AppShell({

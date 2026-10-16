@@ -328,12 +328,14 @@ function Shell({
       onToggleRightRail={() => setDockHidden((h) => !h)}
       header={
         <div className="flex w-full items-center justify-end">
+          {/* Beside the content only: below md the shell's own top bar opens the dock as a drawer. */}
           <Button
             size="sm"
             variant={dockHidden ? "outline" : "secondary"}
             aria-pressed={!dockHidden}
             title="Assistant (])"
             onClick={() => setDockHidden((h) => !h)}
+            className="hidden md:inline-flex"
           >
             <SparklesIcon aria-hidden /> Assistant
           </Button>
