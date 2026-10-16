@@ -1,0 +1,85 @@
+name: ci
+
+# The always tier on every ready pull request: format, lint, typecheck, story
+# coverage, tests (every story rendered through the a11y addon included), the
+# package build and its check, and the Storybook build. One job, so setup is
+# paid once.
+on:
+  pull_request:
+    # Drafts skip (see `if` below); marking one ready starts the run.
+    types: [opened, synchronize, reopened, ready_for_review]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# A newer push to a pull request cancels the older run.
+concurrency:
+  group: ci-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    name: check
+    if: ${{ github.event_name != 'pull_request' || github.event.pull_request.draft == false }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          # The merge commit and its first parent: enough to see what changed.
+          fetch-depth: 2
+
+      - name: Classify the change
+        id: changes
+        run: |
+          if [ "$GITHUB_EVENT_NAME" != pull_request ]; then
+            echo "docs_only=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          changed=$(git diff --name-only HEAD^1 HEAD)
+          printf 'changed:\n%s\n' "$changed"
+          # Markdown at the top level is documentation. Anything else, any path
+          # this does not recognise included, runs everything.
+          if [ -n "$changed" ] && ! printf '%s\n' "$changed" | grep -v -E '^[^/]+\.md$' | grep -q .; then
+            echo "Documentation only: the format check runs, the rest is skipped."
+            echo "docs_only=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "docs_only=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - run: npm ci
+
+      - name: Format
+        run: npm run format:check
+
+      - name: Lint
+        if: steps.changes.outputs.docs_only != 'true'
+        run: npm run lint
+
+      - name: Typecheck
+        if: steps.changes.outputs.docs_only != 'true'
+        run: npm run typecheck
+
+      - name: Story coverage
+        if: steps.changes.outputs.docs_only != 'true'
+        run: npm run test:story-coverage
+
+      - name: Test
+        if: steps.changes.outputs.docs_only != 'true'
+        run: npm test
+
+      - name: Package build and check
+        if: steps.changes.outputs.docs_only != 'true'
+        run: |
+          npm run build
+          npm run pack:check
+
+      - name: Storybook build
+        if: steps.changes.outputs.docs_only != 'true'
+        run: npm run build-storybook
