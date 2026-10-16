@@ -1,0 +1,165 @@
+/*
+ * @calliopeai/ui Tailwind 4 preset.
+ *
+ *   @import "tailwindcss";
+ *   @import "@calliopeai/ui/preset.css";
+ *
+ * It brings the theme tokens, maps them onto Tailwind's colour, radius, font,
+ * type and motion scales, points Tailwind at this package's components so
+ * their classes are generated, and sets the family's base layer.
+ */
+@import "./theme.css";
+
+/* The package's own components: their classes are generated with the app's. */
+@source "../";
+
+/* Dark follows the ground, not the OS: `data-mode` on <html> says which. */
+@custom-variant dark (&:where([data-mode="dark"], [data-mode="dark"] *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-surface-0: var(--surface-0);
+  --color-surface-1: var(--surface-1);
+  --color-surface-2: var(--surface-2);
+
+  /* Semantic status: solid base, -fg text on the tint, -bg fill, -border hairline. */
+  --color-success: var(--success);
+  --color-success-fg: var(--success-fg);
+  --color-success-bg: var(--success-bg);
+  --color-success-border: var(--success-border);
+  --color-warning: var(--warning);
+  --color-warning-fg: var(--warning-fg);
+  --color-warning-bg: var(--warning-bg);
+  --color-warning-border: var(--warning-border);
+  --color-info: var(--info);
+  --color-info-fg: var(--info-fg);
+  --color-info-bg: var(--info-bg);
+  --color-info-border: var(--info-border);
+  --color-danger: var(--danger);
+  --color-danger-fg: var(--danger-fg);
+  --color-danger-bg: var(--danger-bg);
+  --color-danger-border: var(--danger-border);
+
+  /* IBM Plex Sans for UI, IBM Plex Mono for anything technical, DM Sans for headings. */
+  --font-sans: var(--font-plex-sans, "IBM Plex Sans"), system-ui, sans-serif;
+  --font-mono:
+    var(--font-plex-mono, "IBM Plex Mono"), ui-monospace, SFMono-Regular, Menlo, monospace;
+  --font-head: var(--font-dm-sans, "DM Sans"), system-ui, sans-serif;
+
+  /* `rounded-lg` is the corners setting itself; clamped so 0px never goes negative. */
+  --radius-sm: max(0px, calc(var(--radius) - 4px));
+  --radius-md: max(0px, calc(var(--radius) - 2px));
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --radius-3xl: calc(var(--radius) + 12px);
+  --radius-4xl: calc(var(--radius) + 16px);
+}
+
+@theme {
+  /* The micro step below xs, for eyebrows, counts and table heads. */
+  --text-2xs: 0.6875rem;
+  --text-2xs--line-height: 1rem;
+
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --ease-emphasized: cubic-bezier(0.3, 0, 0, 1);
+
+  /* Overlays arrive calmly and leave at once. */
+  --animate-cui-fade-in: cui-fade-in var(--motion-fast) var(--ease-standard);
+  --animate-cui-pop-in: cui-pop-in var(--motion-base) var(--ease-emphasized);
+  --animate-cui-slide-in-right: cui-slide-in-right var(--motion-base) var(--ease-emphasized);
+  --animate-cui-slide-in-left: cui-slide-in-left var(--motion-base) var(--ease-emphasized);
+  --animate-cui-slide-in-bottom: cui-slide-in-bottom var(--motion-base) var(--ease-emphasized);
+
+  @keyframes cui-fade-in {
+    from {
+      opacity: 0;
+    }
+  }
+  /* `transform` composes with the `translate` that centres a dialog. */
+  @keyframes cui-pop-in {
+    from {
+      opacity: 0;
+      transform: scale(0.98);
+    }
+  }
+  @keyframes cui-slide-in-right {
+    from {
+      transform: translateX(1.5rem);
+      opacity: 0;
+    }
+  }
+  @keyframes cui-slide-in-left {
+    from {
+      transform: translateX(-1.5rem);
+      opacity: 0;
+    }
+  }
+  @keyframes cui-slide-in-bottom {
+    from {
+      transform: translateY(1.5rem);
+      opacity: 0;
+    }
+  }
+}
+
+@layer base {
+  *,
+  ::before,
+  ::after {
+    border-color: var(--border);
+    outline-color: color-mix(in oklab, var(--ring) 50%, transparent);
+  }
+
+  body {
+    @apply bg-background font-sans text-foreground;
+  }
+
+  h1,
+  h2,
+  h3 {
+    @apply font-head;
+  }
+
+  /* Motion is never the only carrier of meaning; with reduced motion it stops. */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    ::before,
+    ::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
