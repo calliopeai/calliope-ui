@@ -32,6 +32,12 @@ Element.prototype.releasePointerCapture ??= function releasePointerCapture() {};
 HTMLCanvasElement.prototype.getContext = (() =>
   null) as typeof HTMLCanvasElement.prototype.getContext;
 
+// jsdom cannot navigate, and says so for every link a test follows. Stop the
+// default action after the app's own handlers have run.
+window.addEventListener("click", (event) => {
+  if ((event.target as Element | null)?.closest?.("a[href]")) event.preventDefault();
+});
+
 // A browser storage contract, independent of whatever Node exposes as
 // localStorage, so local and CI runs behave the same.
 const values = new Map<string, string>();
