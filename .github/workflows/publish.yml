@@ -1,0 +1,68 @@
+name: publish
+
+# Publishes @calliopelabs/ui to npm: the version a published GitHub release
+# names, or a manual run on an existing version tag (never a branch). npm
+# trusted publishing: the job's OIDC identity stands in for a token, so there
+# is no NPM_TOKEN, and the package carries provenance. release-checks.yml
+# first runs every CI gate on the exact tagged commit. Nothing here bumps a
+# version or moves a tag.
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: npm-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  checks:
+    uses: ./.github/workflows/release-checks.yml
+
+  publish:
+    name: publish to npm
+    needs: checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      # npm exchanges the job's OIDC token for a short-lived publish token and
+      # signs the provenance statement with it.
+      id-token: write
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ needs.checks.outputs.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          registry-url: https://registry.npmjs.org
+          package-manager-cache: false
+
+      - name: Recheck the source identity
+        id: source
+        run: node scripts/release/source.mjs
+
+      - run: npm ci
+
+      - name: Publish the tagged source with provenance
+        env:
+          VERSION: ${{ steps.source.outputs.version }}
+          PRERELEASE: ${{ steps.source.outputs.prerelease }}
+        run: |
+          if [ "$(npm view "@calliopelabs/ui@$VERSION" version 2>/dev/null)" = "$VERSION" ]; then
+            echo "::notice title=npm::@calliopelabs/ui@$VERSION is already on npm; nothing to publish."
+            exit 0
+          fi
+          # A prerelease goes out under the alpha dist-tag, never latest.
+          if [ "$PRERELEASE" = true ]; then
+            npm publish --provenance --access public --tag alpha
+          else
+            npm publish --provenance --access public
+          fi

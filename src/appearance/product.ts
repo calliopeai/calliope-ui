@@ -97,7 +97,7 @@ const SLUG = /^[a-z][a-z0-9-]*$/;
 const HEX = /^#[0-9a-f]{6}$/;
 
 function fail(product: string, message: string): never {
-  throw new Error(`@calliopeai/ui: product "${product}": ${message}`);
+  throw new Error(`@calliopelabs/ui: product "${product}": ${message}`);
 }
 
 /**

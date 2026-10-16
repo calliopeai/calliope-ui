@@ -1,4 +1,4 @@
-# Agents: @calliopeai/ui
+# Agents: @calliopelabs/ui
 
 Primary conventions doc: [`bootstrap.md`](bootstrap.md). Read it before writing any code. `AGENTS.md` is also what OpenAI Codex reads.
 

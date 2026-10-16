@@ -1,0 +1,74 @@
+name: release checks
+
+# Called by publish.yml before anything is published. It holds the source
+# identity (the commit of the existing `v<package.json version>` tag, from a
+# published release or a dispatch on that tag), then runs every gate ci.yml
+# runs on a pull request against that exact commit. Release jobs restore no
+# cache.
+on:
+  workflow_call:
+    outputs:
+      version:
+        value: ${{ jobs.checks.outputs.version }}
+      tag:
+        value: ${{ jobs.checks.outputs.tag }}
+      sha:
+        value: ${{ jobs.checks.outputs.sha }}
+      ref:
+        value: ${{ jobs.checks.outputs.ref }}
+
+permissions:
+  contents: read
+
+jobs:
+  checks:
+    name: checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    outputs:
+      version: ${{ steps.source.outputs.version }}
+      tag: ${{ steps.source.outputs.tag }}
+      sha: ${{ steps.source.outputs.sha }}
+      ref: ${{ steps.source.outputs.ref }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          package-manager-cache: false
+
+      - name: Verify the source identity
+        id: source
+        run: node scripts/release/source.mjs
+
+      - run: npm ci
+
+      - name: Format
+        run: npm run format:check
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Story coverage
+        run: npm run test:story-coverage
+
+      - name: Test
+        run: npm test
+
+      - name: Package build and check
+        run: |
+          npm run build
+          npm run pack:check
+
+      - name: Storybook build
+        run: npm run build-storybook
+
+      - name: Require a clean source tree
+        run: test -z "$(git status --porcelain)"

@@ -1,4 +1,4 @@
-# @calliopeai/ui bootstrap
+# @calliopelabs/ui bootstrap
 
 The conventions document for this package. The agent shims (`CLAUDE.md`, `AGENTS.md`) point here. An agent given this document and a UI requirement should be able to add or change a component correctly without exploring the codebase.
 
@@ -40,7 +40,7 @@ src/
   examples/           the Astrolift and Zentinelle shells, whole (catalog only, not shipped)
   test/               setup.ts, the story-coverage test and the every-story-renders test
 .storybook/           main.ts, preview.tsx (providers and appearance toolbars), storybook.css
-scripts/              build.mjs, check-package.mjs, generate-theme.ts
+scripts/              build.mjs, check-package.mjs, generate-theme.ts, release/source.mjs (the publication identity)
 ```
 
 ## Rules
@@ -87,6 +87,6 @@ All tests are the always tier: fast, deterministic, no network. Vitest runs with
 
 - `ci.yml`, on ready pull requests (drafts skip, superseded runs cancel, npm cache): format, lint, typecheck, story coverage, tests, package build and check, Storybook build, in one job. A change that is only top-level Markdown runs the format check alone.
 - `storybook.yml`, on merges to `main` that touch the package: the tests again, then the catalog to GitHub Pages.
-- `release.yml`, on a `v*` tag: checks the tag names `package.json`'s version, runs every gate, packs once, and publishes that tarball to npm with provenance (`NPM_TOKEN`) and to GitHub Packages (`GITHUB_TOKEN`). A registry whose token is missing is skipped with a warning; a version already published is left alone.
+- `publish.yml`, on a published GitHub release or a dispatch on an existing version tag (never a branch): `release-checks.yml` holds the source identity (`scripts/release/source.mjs`: the tag names `package.json`'s version and points at the checked-out commit) and runs every gate `ci.yml` runs on that commit, then publishes to npm with provenance through trusted publishing (the job's OIDC identity, no npm token). A prerelease takes the `alpha` dist-tag; a version already on npm is left alone. A new package's first publish is by hand: see Releasing in the README.
 
 Git: no rebases, no force pushes, no AI attribution in commits. Commit as Leo Mata <leo@calliope.ai>.
