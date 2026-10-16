@@ -1,6 +1,6 @@
 /**
- * @calliopeai/ui: the Calliope AI operator UI, shared by Astrolift AI and
- * Zentinelle AI. Styles: `@import "@calliopeai/ui/preset.css"` after Tailwind.
+ * @calliopelabs/ui: the Calliope AI operator UI, shared by Astrolift AI and
+ * Zentinelle AI. Styles: `@import "@calliopelabs/ui/preset.css"` after Tailwind.
  */
 
 // Environment

@@ -1,8 +1,8 @@
 /*
- * @calliopeai/ui Tailwind 4 preset.
+ * @calliopelabs/ui Tailwind 4 preset.
  *
  *   @import "tailwindcss";
- *   @import "@calliopeai/ui/preset.css";
+ *   @import "@calliopelabs/ui/preset.css";
  *
  * It brings the theme tokens, maps them onto Tailwind's colour, radius, font,
  * type and motion scales, points Tailwind at this package's components so
