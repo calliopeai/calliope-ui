@@ -27,7 +27,12 @@ function Source({ product }: { product: Product }) {
         {productStyles(product)}
       </pre>
       <p className="text-sm text-muted-foreground">&lt;script&gt;, reading {product.storageKey}:</p>
-      <pre className="max-h-80 overflow-auto rounded-lg border bg-card p-3 font-mono text-xs whitespace-pre-wrap">
+      <pre
+        tabIndex={0}
+        role="region"
+        aria-label={`Boot script for ${product.name}`}
+        className="max-h-80 overflow-auto rounded-lg border bg-card p-3 font-mono text-xs whitespace-pre-wrap"
+      >
         {appearanceScript(product)}
       </pre>
     </div>

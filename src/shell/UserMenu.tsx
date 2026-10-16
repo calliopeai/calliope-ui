@@ -61,7 +61,10 @@ export function UserMenu({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
-        aria-label={messages.user.accountMenu(name)}
+        // Expanded, the visible name and email are the trigger's name (WCAG
+        // 2.5.3, label in name); collapsed, only the initials show, so it
+        // needs one.
+        aria-label={collapsed ? messages.user.accountMenu(name) : undefined}
         className={cn(
           "flex h-10 w-full min-w-0 items-center gap-2 rounded-lg px-1.5 text-left hover:bg-sidebar-accent/60 focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none",
           collapsed && "justify-center px-0",
@@ -76,7 +79,7 @@ export function UserMenu({
         </span>
         {!collapsed && (
           <span className="grid min-w-0 flex-1 leading-tight">
-            <span className="truncate text-sm font-medium">{name}</span>
+            <span className="truncate text-sm font-medium">{name}</span>{" "}
             <span className="truncate text-xs text-muted-foreground">{email}</span>
           </span>
         )}

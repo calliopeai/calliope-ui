@@ -106,6 +106,9 @@ export default tseslint.config(
         { argsIgnorePattern: "^_", varsIgnorePattern: "^_", caughtErrorsIgnorePattern: "^_" },
       ],
       "@typescript-eslint/consistent-type-imports": "error",
+      // A region that scrolls must take focus so the keyboard can scroll it
+      // (axe's scrollable-region-focusable); a labelled region is the pattern.
+      "jsx-a11y/no-noninteractive-tabindex": ["error", { roles: ["tabpanel", "region"], tags: [] }],
     },
   },
   {

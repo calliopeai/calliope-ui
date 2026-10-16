@@ -60,7 +60,8 @@ export interface EmptyStateSpec {
  * Rules the type cannot hold: paging is server-side; the search box shows only
  * when the query takes a search argument (`searchEnabled`); search is
  * debounced by the controller, never per keystroke; rows from the previous
- * question stay on screen, faded (`isStale`), until the next answer lands.
+ * question stay on screen (`isStale`, drawn with a progress line, at full
+ * contrast) until the next answer lands.
  */
 export interface TableController<TRow> {
   rows: readonly TRow[];

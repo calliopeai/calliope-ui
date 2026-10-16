@@ -301,12 +301,10 @@ export function DataTable<TRow>({
 
   const table = (
     <div
-      className={cn(
-        "overflow-hidden rounded-lg border transition-opacity",
-        controller.isStale && "opacity-60"
-      )}
+      className="relative overflow-hidden rounded-lg border"
       aria-busy={state === "loading" || controller.isStale || undefined}
     >
+      {controller.isStale && <StaleBar />}
       <div className="[container-type:inline-size] relative w-full overflow-x-auto">
         <table className="w-full caption-bottom text-sm">
           <caption className="sr-only">{label}</caption>
@@ -356,7 +354,7 @@ export function DataTable<TRow>({
   );
 
   const cardGrid = (() => {
-    const grid = "grid min-w-0 grid-cols-(--list-columns) gap-(--list-gap) transition-opacity";
+    const grid = "grid min-w-0 grid-cols-(--list-columns) gap-(--list-gap)";
     const box =
       "relative min-w-0 rounded-(--list-item-radius) border-(length:--list-item-border) bg-(--list-item-bg) [padding:var(--list-item-pad)]";
     switch (state) {
@@ -376,31 +374,34 @@ export function DataTable<TRow>({
         return <EmptyState {...empty} />;
       case "ready":
         return (
-          <ul aria-label={label} className={cn(grid, controller.isStale && "opacity-60")}>
-            {rows.map((row) => (
-              <li key={getRowId(row)} className={cn(box, rowClassName?.(row))}>
-                {rowHref ? (
-                  <Link
-                    href={rowHref(row)}
-                    className="block h-full rounded-lg outline-none after:absolute after:inset-0 focus-visible:after:ring-2 focus-visible:after:ring-ring"
-                  >
-                    {renderCard?.(row)}
-                  </Link>
-                ) : onRowActivate ? (
-                  <button
-                    type="button"
-                    aria-label={rowLabel?.(row)}
-                    onClick={() => onRowActivate(row)}
-                    className="block h-full w-full text-left outline-none after:absolute after:inset-0 focus-visible:after:ring-2 focus-visible:after:ring-ring"
-                  >
-                    {renderCard?.(row)}
-                  </button>
-                ) : (
-                  renderCard?.(row)
-                )}
-              </li>
-            ))}
-          </ul>
+          <div className="relative" aria-busy={controller.isStale || undefined}>
+            {controller.isStale && <StaleBar className="-top-1.5" />}
+            <ul aria-label={label} className={grid}>
+              {rows.map((row) => (
+                <li key={getRowId(row)} className={cn(box, rowClassName?.(row))}>
+                  {rowHref ? (
+                    <Link
+                      href={rowHref(row)}
+                      className="block h-full rounded-lg outline-none after:absolute after:inset-0 focus-visible:after:ring-2 focus-visible:after:ring-ring"
+                    >
+                      {renderCard?.(row)}
+                    </Link>
+                  ) : onRowActivate ? (
+                    <button
+                      type="button"
+                      aria-label={rowLabel?.(row)}
+                      onClick={() => onRowActivate(row)}
+                      className="block h-full w-full text-left outline-none after:absolute after:inset-0 focus-visible:after:ring-2 focus-visible:after:ring-ring"
+                    >
+                      {renderCard?.(row)}
+                    </button>
+                  ) : (
+                    renderCard?.(row)
+                  )}
+                </li>
+              ))}
+            </ul>
+          </div>
         );
     }
   })();
@@ -438,6 +439,25 @@ export function DataTable<TRow>({
           {t.loading}
         </p>
       )}
+    </div>
+  );
+}
+
+/**
+ * The rows on screen answer the previous question while the next answer is
+ * on its way. They stay at full contrast; this line across the top of the
+ * frame says they are being replaced. With reduced motion it holds still.
+ */
+function StaleBar({ className }: { className?: string }) {
+  return (
+    <div
+      aria-hidden
+      className={cn(
+        "pointer-events-none absolute inset-x-0 top-0 z-20 h-0.5 overflow-hidden",
+        className
+      )}
+    >
+      <div className="h-full w-1/3 animate-cui-progress rounded-full bg-primary motion-reduce:animate-none" />
     </div>
   );
 }
@@ -483,10 +503,12 @@ function SortHeader({
         <ChevronsUpDownIcon className="size-3.5 opacity-40" aria-hidden />
       )}
       {index !== -1 && sorts.length > 1 && (
-        <span className="font-mono text-2xs tabular-nums">
-          {index + 1}
+        <>
+          <span aria-hidden className="font-mono text-2xs tabular-nums">
+            {index + 1}
+          </span>
           <span className="sr-only">, {messages.table.sortKey(index + 1)}</span>
-        </span>
+        </>
       )}
     </button>
   );

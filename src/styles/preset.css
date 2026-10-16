@@ -100,6 +100,8 @@
   --animate-cui-slide-in-right: cui-slide-in-right var(--motion-base) var(--ease-emphasized);
   --animate-cui-slide-in-left: cui-slide-in-left var(--motion-base) var(--ease-emphasized);
   --animate-cui-slide-in-bottom: cui-slide-in-bottom var(--motion-base) var(--ease-emphasized);
+  /* A table's rows being replaced: a short bar travelling along the top edge. */
+  --animate-cui-progress: cui-progress 1.4s var(--ease-standard) infinite;
 
   @keyframes cui-fade-in {
     from {
@@ -123,6 +125,14 @@
     from {
       transform: translateX(-1.5rem);
       opacity: 0;
+    }
+  }
+  @keyframes cui-progress {
+    from {
+      translate: -100% 0;
+    }
+    to {
+      translate: 300% 0;
     }
   }
   @keyframes cui-slide-in-bottom {

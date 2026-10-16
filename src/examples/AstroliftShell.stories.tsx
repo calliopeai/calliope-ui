@@ -359,7 +359,7 @@ export const AppsList: StoryObj = {
       "page"
     );
     // Follow the first row to the app's page; the rail tree lights it.
-    await userEvent.click(canvas.getByRole("link", { name: "checkout" }));
+    await userEvent.click(canvas.getByRole("link", { name: /^checkout/ }));
     await expect(
       await canvas.findByRole("heading", { level: 1, name: "checkout" })
     ).toBeInTheDocument();

@@ -7,7 +7,7 @@ export interface StatusBadgeProps extends Omit<React.ComponentProps<"span">, "ch
   tone: StatusTone;
   /** The status in words ("running", "failed"). Colour is never the only carrier. */
   children: React.ReactNode;
-  /** In flight (deploying, running): the badge pulses. */
+  /** In flight (deploying, running): the dot pulses; the label holds still, so it stays readable. */
   pulse?: boolean;
   /** Strike the label through, for superseded states. */
   struck?: boolean;
@@ -35,14 +35,16 @@ export function StatusBadge({
       className={cn(
         "inline-flex h-5 w-fit shrink-0 items-center gap-1.5 overflow-hidden rounded-full border px-2 font-mono text-xs font-semibold whitespace-nowrap",
         PILL_TONE[tone],
-        pulse && IN_FLIGHT,
         className
       )}
       {...props}
     >
       <span
         aria-hidden
-        className="size-1.5 shrink-0 rounded-full bg-current shadow-[0_0_8px_currentColor]"
+        className={cn(
+          "size-1.5 shrink-0 rounded-full bg-current shadow-[0_0_8px_currentColor]",
+          pulse && IN_FLIGHT
+        )}
       />
       <span className={cn("truncate", struck && "line-through")}>{children}</span>
     </span>

@@ -13,7 +13,21 @@ const config: StorybookConfig = {
   async viteFinal(viteConfig) {
     const { mergeConfig } = await import("vite");
     const { default: tailwindcss } = await import("@tailwindcss/vite");
-    return mergeConfig(viteConfig, { plugins: [tailwindcss()] });
+    return mergeConfig(viteConfig, {
+      plugins: [tailwindcss()],
+      build: {
+        // The catalog is one client bundle: "use client" means nothing in it,
+        // and every component file carries one. The catalog also ships every
+        // story at once, so the chunk-size hint does not apply.
+        chunkSizeWarningLimit: 4096,
+        rolldownOptions: {
+          onLog(level, log, handler) {
+            if (log.code === "MODULE_LEVEL_DIRECTIVE") return;
+            handler(level, log);
+          },
+        },
+      },
+    });
   },
 };
 

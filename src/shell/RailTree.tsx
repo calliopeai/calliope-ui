@@ -100,7 +100,7 @@ function Branch({ group, activeHref }: { group: RailTreeGroup; activeHref?: stri
         <Chevron className="size-3.5 shrink-0 text-muted-foreground" aria-hidden />
         <span className="truncate font-medium" title={group.label}>
           {group.label}
-        </span>
+        </span>{" "}
         <span className="ml-auto font-mono text-2xs text-muted-foreground">
           {group.items.length}
         </span>
@@ -128,7 +128,7 @@ function Branch({ group, activeHref }: { group: RailTreeGroup; activeHref?: stri
                 {Icon && <Icon className="size-3.5 shrink-0 opacity-70" aria-hidden />}
                 <span className="truncate" title={item.label}>
                   {item.label}
-                </span>
+                </span>{" "}
                 {item.status && (
                   <StatusDot tone={item.status} label={item.statusLabel} className="ml-auto" />
                 )}
